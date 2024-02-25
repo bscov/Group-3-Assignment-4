@@ -1,0 +1,43 @@
+,Execution Time (seconds),Memory Usage (MB)
+Load & Inspect Data,,
+R,0.173946858,409.0445328
+Python,0.055719852,201.046875
+Fund Log Transformation,,
+R,0.025820971,409.0982437
+Python,0.005049706,201.21875
+Fund Transformation Plots,,
+R,0.032521009,409.7133942
+Python,0.721319914,214.15625
+Compute Drift & Variance,,
+R,0.022471905,409.3455887
+Python,0.002657175,214.375
+Compute Variance & Daily Returns,,
+R,0.350738049,409.3457947
+Python,0.392639875,499.3125
+Simulate Price Path for Trials,,
+R,0.205255032,409.3777313
+Python,0.026353836,474.515625
+Price Paths to Dataframes,,
+R,0.239679098,408.7008591
+Python,0.00937891,459.8125
+Calculate Return & Volatility,,
+R,0.547215939,409.8740997
+Python,0.056699276,410.640625
+Calculate Average Return & Create Table,,
+R,0.023334026,409.8772125
+Python,0.005060196,411.3125
+Export Dataframes to CSV,,
+R,4.930419922,409.9670715
+Python,5.008857965,488.421875
+Bring in data,,
+R,0.173946858,409.0445328
+Python,0.055719852,201.046875
+Export data,,
+R,4.930419922,409.9670715
+Python,5.008857965,488.421875
+Benchmark study implementation,,
+R,1.588461876,3274.664063
+Python,0.553558826,2872.234375
+Graph Codes,,
+R,0.032521009,409.7133942
+Python,0.721319914,214.15625
