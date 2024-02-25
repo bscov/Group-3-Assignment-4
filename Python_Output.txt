@@ -1,0 +1,1887 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+
+
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{Assignment4}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb.
+    \makeatletter
+        \newbox\Wrappedcontinuationbox
+        \newbox\Wrappedvisiblespacebox
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}}
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}}
+        \newcommand*\Wrappedcontinuationindent {3ex }
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox}
+        % Take advantage of the already applied Pygments mark-up to insert
+        % potential linebreaks for TeX processing.
+        %        {, <, #, %, $, ' and ": go to next line.
+        %        _, }, ^, &, >, - and ~: stay at end of broken line.
+        % Use of \textquotesingle for straight quote.
+        \newcommand*\Wrappedbreaksatspecials {%
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}%
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}%
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}%
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}%
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}%
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}%
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}%
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}%
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}%
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}%
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}%
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}%
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}%
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}%
+        }
+        % Some characters . , ; ? ! / are not pygmentized.
+        % This macro makes them "active" and they will insert potential linebreaks
+        \newcommand*\Wrappedbreaksatpunct {%
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}%
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}%
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}%
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}%
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}%
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}%
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}%
+            \catcode`\.\active
+            \catcode`\,\active
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active
+            \lccode`\~`\~
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{o}{\PYZpc{}}\PY{k}{matplotlib} inline
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{norm}
+\PY{k+kn}{from} \PY{n+nn}{tabulate} \PY{k+kn}{import} \PY{n}{tabulate}
+\PY{k+kn}{import} \PY{n+nn}{time}
+\PY{k+kn}{import} \PY{n+nn}{psutil}
+
+\PY{c+c1}{\PYZsh{} Set up notebook to display multiple outputs in one cell}
+\PY{k+kn}{from} \PY{n+nn}{IPython}\PY{n+nn}{.}\PY{n+nn}{core}\PY{n+nn}{.}\PY{n+nn}{interactiveshell} \PY{k+kn}{import} \PY{n}{InteractiveShell}
+\PY{n}{InteractiveShell}\PY{o}{.}\PY{n}{ast\PYZus{}node\PYZus{}interactivity} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{all}\PY{l+s+s2}{\PYZdq{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \section{Import Fund Data}\label{import-fund-data}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+
+\PY{n}{data\PYZus{}active\PYZus{}1} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PCCOX.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{data\PYZus{}active\PYZus{}2} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PRILX.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{data\PYZus{}active\PYZus{}3} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{RWMGX.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{data\PYZus{}passive} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{WFSPX.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{data\PYZus{}active\PYZus{}1}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\PY{n}{data\PYZus{}active\PYZus{}1}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+\PY{n}{data\PYZus{}active\PYZus{}2}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\PY{n}{data\PYZus{}active\PYZus{}2}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+\PY{n}{data\PYZus{}active\PYZus{}3}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\PY{n}{data\PYZus{}active\PYZus{}3}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+\PY{n}{data\PYZus{}passive}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\PY{n}{data\PYZus{}passive}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get execution time}
+\PY{n}{end\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{execution\PYZus{}time} \PY{o}{=} \PY{n}{end\PYZus{}time} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Execution Time: }\PY{l+s+si}{\PYZob{}}\PY{n}{execution\PYZus{}time}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ seconds}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get memory usage}
+\PY{n}{memory\PYZus{}info} \PY{o}{=} \PY{n}{psutil}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{memory\PYZus{}info}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Memory Usage: }\PY{l+s+si}{\PYZob{}}\PY{n}{memory\PYZus{}info}\PY{o}{.}\PY{n}{rss} \PY{o}{/} \PY{l+m+mi}{1024} \PY{o}{/} \PY{l+m+mi}{1024}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ MB}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+         Date       Open       High        Low      Close  Adj Close  Volume
+0  11/29/2016  23.879999  23.879999  23.879999  23.879999  19.379829     0.0
+1  11/30/2016  23.770000  23.770000  23.770000  23.770000  19.290562     0.0
+2   12/1/2016  23.639999  23.639999  23.639999  23.639999  19.185059     0.0
+3   12/2/2016  23.660000  23.660000  23.660000  23.660000  19.201288     0.0
+4   12/5/2016        NaN        NaN        NaN        NaN        NaN     NaN
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 1816 entries, 0 to 1815
+Data columns (total 7 columns):
+ \#   Column     Non-Null Count  Dtype
+---  ------     --------------  -----
+ 0   Date       1816 non-null   object
+ 1   Open       1815 non-null   float64
+ 2   High       1815 non-null   float64
+ 3   Low        1815 non-null   float64
+ 4   Close      1815 non-null   float64
+ 5   Adj Close  1815 non-null   float64
+ 6   Volume     1815 non-null   float64
+dtypes: float64(6), object(1)
+memory usage: 99.4+ KB
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+        Date       Open       High        Low      Close  Adj Close  Volume
+0  4/28/2006  25.590000  25.590000  25.590000  25.590000   9.497851       0
+1   5/1/2006  25.510000  25.510000  25.510000  25.510000   9.468159       0
+2   5/2/2006  25.580000  25.580000  25.580000  25.580000   9.494144       0
+3   5/3/2006  25.610001  25.610001  25.610001  25.610001   9.505277       0
+4   5/4/2006  25.670000  25.670000  25.670000  25.670000   9.527547       0
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 4482 entries, 0 to 4481
+Data columns (total 7 columns):
+ \#   Column     Non-Null Count  Dtype
+---  ------     --------------  -----
+ 0   Date       4482 non-null   object
+ 1   Open       4482 non-null   float64
+ 2   High       4482 non-null   float64
+ 3   Low        4482 non-null   float64
+ 4   Close      4482 non-null   float64
+ 5   Adj Close  4482 non-null   float64
+ 6   Volume     4482 non-null   int64
+dtypes: float64(5), int64(1), object(1)
+memory usage: 245.2+ KB
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+       Date       Open       High        Low      Close  Adj Close  Volume
+0  5/1/2009  19.950001  19.950001  19.950001  19.950001   8.865779       0
+1  5/4/2009  20.580000  20.580000  20.580000  20.580000   9.145751       0
+2  5/5/2009  20.520000  20.520000  20.520000  20.520000   9.119089       0
+3  5/6/2009  20.790001  20.790001  20.790001  20.790001   9.239075       0
+4  5/7/2009  20.549999  20.549999  20.549999  20.549999   9.132417       0
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 3725 entries, 0 to 3724
+Data columns (total 7 columns):
+ \#   Column     Non-Null Count  Dtype
+---  ------     --------------  -----
+ 0   Date       3725 non-null   object
+ 1   Open       3725 non-null   float64
+ 2   High       3725 non-null   float64
+ 3   Low        3725 non-null   float64
+ 4   Close      3725 non-null   float64
+ 5   Adj Close  3725 non-null   float64
+ 6   Volume     3725 non-null   int64
+dtypes: float64(5), int64(1), object(1)
+memory usage: 203.8+ KB
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+       Date       Open       High        Low      Close  Adj Close  Volume
+0  7/2/1993  80.000000  80.000000  80.000000  80.000000  19.307232       0
+1  7/6/1993  79.199997  79.199997  79.199997  79.199997  19.114147       0
+2  7/7/1993  79.440002  79.440002  79.440002  79.440002  19.172077       0
+3  7/8/1993  80.480003  80.480003  80.480003  80.480003  19.423063       0
+4  7/9/1993  80.400002  80.400002  80.400002  80.400002  19.403767       0
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 7712 entries, 0 to 7711
+Data columns (total 7 columns):
+ \#   Column     Non-Null Count  Dtype
+---  ------     --------------  -----
+ 0   Date       7712 non-null   object
+ 1   Open       7712 non-null   float64
+ 2   High       7712 non-null   float64
+ 3   Low        7712 non-null   float64
+ 4   Close      7712 non-null   float64
+ 5   Adj Close  7712 non-null   float64
+ 6   Volume     7712 non-null   int64
+dtypes: float64(5), int64(1), object(1)
+memory usage: 421.9+ KB
+Execution Time: 0.055719852447509766 seconds
+Memory Usage: 201.046875 MB
+    \end{Verbatim}
+
+    \subsection{Fund Transformation}\label{fund-transformation}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} compute the logarithmic returns of each of the funds}
+\PY{n}{log\PYZus{}return\PYZus{}active\PYZus{}1} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{l+m+mi}{1} \PY{o}{+} \PY{n}{data\PYZus{}active\PYZus{}1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Adj Close}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{pct\PYZus{}change}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n}{log\PYZus{}return\PYZus{}active\PYZus{}2} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{l+m+mi}{1} \PY{o}{+} \PY{n}{data\PYZus{}active\PYZus{}2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Adj Close}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{pct\PYZus{}change}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n}{log\PYZus{}return\PYZus{}active\PYZus{}3} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{l+m+mi}{1} \PY{o}{+} \PY{n}{data\PYZus{}active\PYZus{}3}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Adj Close}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{pct\PYZus{}change}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n}{log\PYZus{}return\PYZus{}passive} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{l+m+mi}{1} \PY{o}{+} \PY{n}{data\PYZus{}passive}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Adj Close}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{pct\PYZus{}change}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get execution time}
+\PY{n}{end\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{execution\PYZus{}time} \PY{o}{=} \PY{n}{end\PYZus{}time} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Execution Time: }\PY{l+s+si}{\PYZob{}}\PY{n}{execution\PYZus{}time}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ seconds}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get memory usage}
+\PY{n}{memory\PYZus{}info} \PY{o}{=} \PY{n}{psutil}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{memory\PYZus{}info}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Memory Usage: }\PY{l+s+si}{\PYZob{}}\PY{n}{memory\PYZus{}info}\PY{o}{.}\PY{n}{rss} \PY{o}{/} \PY{l+m+mi}{1024} \PY{o}{/} \PY{l+m+mi}{1024}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ MB}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Execution Time: 0.005049705505371094 seconds
+Memory Usage: 201.21875 MB
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} plot the log returns}
+
+\PY{n}{fig} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{p}{)}
+\PY{n}{fig}\PY{o}{.}\PY{n}{subplots\PYZus{}adjust}\PY{p}{(}\PY{n}{hspace}\PY{o}{=}\PY{l+m+mf}{0.6}\PY{p}{,} \PY{n}{wspace}\PY{o}{=}\PY{l+m+mf}{0.6}\PY{p}{)}
+
+\PY{n}{ax} \PY{o}{=} \PY{n}{fig}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{histplot}\PY{p}{(}\PY{n}{log\PYZus{}return\PYZus{}active\PYZus{}1}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{:}\PY{p}{]}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Daily Return}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Frequency}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Log of PCCOX Returns}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{ax} \PY{o}{=} \PY{n}{fig}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{histplot}\PY{p}{(}\PY{n}{log\PYZus{}return\PYZus{}active\PYZus{}2}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{:}\PY{p}{]}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Daily Return}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Frequency}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Log of PRILX Returns}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{ax} \PY{o}{=} \PY{n}{fig}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{histplot}\PY{p}{(}\PY{n}{log\PYZus{}return\PYZus{}active\PYZus{}3}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{:}\PY{p}{]}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Daily Return}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Frequency}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Log of RWMGX Returns}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{ax} \PY{o}{=} \PY{n}{fig}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{histplot}\PY{p}{(}\PY{n}{log\PYZus{}return\PYZus{}passive}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{:}\PY{p}{]}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Daily Return}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Frequency}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Log of WFSPX Returns}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get execution time}
+\PY{n}{end\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{execution\PYZus{}time} \PY{o}{=} \PY{n}{end\PYZus{}time} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Execution Time: }\PY{l+s+si}{\PYZob{}}\PY{n}{execution\PYZus{}time}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ seconds}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get memory usage}
+\PY{n}{memory\PYZus{}info} \PY{o}{=} \PY{n}{psutil}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{memory\PYZus{}info}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Memory Usage: }\PY{l+s+si}{\PYZob{}}\PY{n}{memory\PYZus{}info}\PY{o}{.}\PY{n}{rss} \PY{o}{/} \PY{l+m+mi}{1024} \PY{o}{/} \PY{l+m+mi}{1024}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ MB}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot: xlabel='Adj Close', ylabel='Count'>
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 0, 'Daily Return')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0, 0.5, 'Frequency')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 1.0, 'Log of PCCOX Returns')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot: xlabel='Adj Close', ylabel='Count'>
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 0, 'Daily Return')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0, 0.5, 'Frequency')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 1.0, 'Log of PRILX Returns')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot: xlabel='Adj Close', ylabel='Count'>
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 0, 'Daily Return')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0, 0.5, 'Frequency')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 1.0, 'Log of RWMGX Returns')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot: xlabel='Adj Close', ylabel='Count'>
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 0, 'Daily Return')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0, 0.5, 'Frequency')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 1.0, 'Log of WFSPX Returns')
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_5_16.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+Execution Time: 0.7213199138641357 seconds
+Memory Usage: 214.15625 MB
+    \end{Verbatim}
+
+    \section{Simulation}\label{simulation}
+
+    \subsection{Compute Drift \& Variance}\label{compute-drift-variance}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} compute the drift}
+
+\PY{n}{mean\PYZus{}active\PYZus{}1} \PY{o}{=} \PY{n}{log\PYZus{}return\PYZus{}active\PYZus{}1}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+\PY{n}{var\PYZus{}active\PYZus{}1} \PY{o}{=} \PY{n}{log\PYZus{}return\PYZus{}active\PYZus{}1}\PY{o}{.}\PY{n}{var}\PY{p}{(}\PY{p}{)}
+\PY{n}{drift\PYZus{}active\PYZus{}1} \PY{o}{=} \PY{n}{mean\PYZus{}active\PYZus{}1} \PY{o}{\PYZhy{}} \PY{p}{(}\PY{l+m+mf}{0.5}\PY{o}{*}\PY{n}{var\PYZus{}active\PYZus{}1}\PY{p}{)}
+
+\PY{n}{mean\PYZus{}active\PYZus{}2} \PY{o}{=} \PY{n}{log\PYZus{}return\PYZus{}active\PYZus{}2}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+\PY{n}{var\PYZus{}active\PYZus{}2} \PY{o}{=} \PY{n}{log\PYZus{}return\PYZus{}active\PYZus{}2}\PY{o}{.}\PY{n}{var}\PY{p}{(}\PY{p}{)}
+\PY{n}{drift\PYZus{}active\PYZus{}2} \PY{o}{=} \PY{n}{mean\PYZus{}active\PYZus{}2} \PY{o}{\PYZhy{}} \PY{p}{(}\PY{l+m+mf}{0.5}\PY{o}{*}\PY{n}{var\PYZus{}active\PYZus{}2}\PY{p}{)}
+
+\PY{n}{mean\PYZus{}active\PYZus{}3} \PY{o}{=} \PY{n}{log\PYZus{}return\PYZus{}active\PYZus{}3}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+\PY{n}{var\PYZus{}active\PYZus{}3} \PY{o}{=} \PY{n}{log\PYZus{}return\PYZus{}active\PYZus{}3}\PY{o}{.}\PY{n}{var}\PY{p}{(}\PY{p}{)}
+\PY{n}{drift\PYZus{}active\PYZus{}3} \PY{o}{=} \PY{n}{mean\PYZus{}active\PYZus{}3} \PY{o}{\PYZhy{}} \PY{p}{(}\PY{l+m+mf}{0.5}\PY{o}{*}\PY{n}{var\PYZus{}active\PYZus{}3}\PY{p}{)}
+
+\PY{n}{mean\PYZus{}passive} \PY{o}{=} \PY{n}{log\PYZus{}return\PYZus{}passive}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+\PY{n}{var\PYZus{}passive} \PY{o}{=} \PY{n}{log\PYZus{}return\PYZus{}passive}\PY{o}{.}\PY{n}{var}\PY{p}{(}\PY{p}{)}
+\PY{n}{drift\PYZus{}passive} \PY{o}{=} \PY{n}{mean\PYZus{}passive} \PY{o}{\PYZhy{}} \PY{p}{(}\PY{l+m+mf}{0.5}\PY{o}{*}\PY{n}{var\PYZus{}passive}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get execution time}
+\PY{n}{end\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{execution\PYZus{}time} \PY{o}{=} \PY{n}{end\PYZus{}time} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Execution Time: }\PY{l+s+si}{\PYZob{}}\PY{n}{execution\PYZus{}time}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ seconds}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get memory usage}
+\PY{n}{memory\PYZus{}info} \PY{o}{=} \PY{n}{psutil}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{memory\PYZus{}info}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Memory Usage: }\PY{l+s+si}{\PYZob{}}\PY{n}{memory\PYZus{}info}\PY{o}{.}\PY{n}{rss} \PY{o}{/} \PY{l+m+mi}{1024} \PY{o}{/} \PY{l+m+mi}{1024}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ MB}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Execution Time: 0.002657175064086914 seconds
+Memory Usage: 214.375 MB
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} compute the variance and daily returns}
+
+\PY{n}{days} \PY{o}{=} \PY{l+m+mi}{251}
+\PY{n}{trials} \PY{o}{=} \PY{l+m+mi}{10000}
+
+\PY{n}{stdev\PYZus{}active\PYZus{}1} \PY{o}{=} \PY{n}{log\PYZus{}return\PYZus{}active\PYZus{}1}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{p}{)}
+\PY{n}{Z\PYZus{}active\PYZus{}1} \PY{o}{=} \PY{n}{norm}\PY{o}{.}\PY{n}{ppf}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{rand}\PY{p}{(}\PY{n}{days}\PY{p}{,} \PY{n}{trials}\PY{p}{)}\PY{p}{)} 
+\PY{n}{daily\PYZus{}returns\PYZus{}active\PYZus{}1} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{n}{drift\PYZus{}active\PYZus{}1} \PY{o}{+} \PY{n}{stdev\PYZus{}active\PYZus{}1} \PY{o}{*} \PY{n}{Z\PYZus{}active\PYZus{}1}\PY{p}{)}
+
+\PY{n}{stdev\PYZus{}active\PYZus{}2} \PY{o}{=} \PY{n}{log\PYZus{}return\PYZus{}active\PYZus{}2}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{p}{)}
+\PY{n}{Z\PYZus{}active\PYZus{}2} \PY{o}{=} \PY{n}{norm}\PY{o}{.}\PY{n}{ppf}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{rand}\PY{p}{(}\PY{n}{days}\PY{p}{,} \PY{n}{trials}\PY{p}{)}\PY{p}{)} 
+\PY{n}{daily\PYZus{}returns\PYZus{}active\PYZus{}2} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{n}{drift\PYZus{}active\PYZus{}2} \PY{o}{+} \PY{n}{stdev\PYZus{}active\PYZus{}2} \PY{o}{*} \PY{n}{Z\PYZus{}active\PYZus{}2}\PY{p}{)}
+
+\PY{n}{stdev\PYZus{}active\PYZus{}3} \PY{o}{=} \PY{n}{log\PYZus{}return\PYZus{}active\PYZus{}3}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{p}{)}
+\PY{n}{Z\PYZus{}active\PYZus{}3} \PY{o}{=} \PY{n}{norm}\PY{o}{.}\PY{n}{ppf}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{rand}\PY{p}{(}\PY{n}{days}\PY{p}{,} \PY{n}{trials}\PY{p}{)}\PY{p}{)} 
+\PY{n}{daily\PYZus{}returns\PYZus{}active\PYZus{}3} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{n}{drift\PYZus{}active\PYZus{}3} \PY{o}{+} \PY{n}{stdev\PYZus{}active\PYZus{}3} \PY{o}{*} \PY{n}{Z\PYZus{}active\PYZus{}3}\PY{p}{)}
+
+\PY{n}{stdev\PYZus{}passive} \PY{o}{=} \PY{n}{log\PYZus{}return\PYZus{}passive}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{p}{)}
+\PY{n}{Z\PYZus{}passive}  \PY{o}{=} \PY{n}{norm}\PY{o}{.}\PY{n}{ppf}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{rand}\PY{p}{(}\PY{n}{days}\PY{p}{,} \PY{n}{trials}\PY{p}{)}\PY{p}{)} 
+\PY{n}{daily\PYZus{}returns\PYZus{}passive}  \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{n}{drift\PYZus{}passive}  \PY{o}{+} \PY{n}{stdev\PYZus{}passive}  \PY{o}{*} \PY{n}{Z\PYZus{}passive}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get execution time}
+\PY{n}{end\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{execution\PYZus{}time} \PY{o}{=} \PY{n}{end\PYZus{}time} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Execution Time: }\PY{l+s+si}{\PYZob{}}\PY{n}{execution\PYZus{}time}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ seconds}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get memory usage}
+\PY{n}{memory\PYZus{}info} \PY{o}{=} \PY{n}{psutil}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{memory\PYZus{}info}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Memory Usage: }\PY{l+s+si}{\PYZob{}}\PY{n}{memory\PYZus{}info}\PY{o}{.}\PY{n}{rss} \PY{o}{/} \PY{l+m+mi}{1024} \PY{o}{/} \PY{l+m+mi}{1024}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ MB}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Execution Time: 0.3926398754119873 seconds
+Memory Usage: 499.3125 MB
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{daily\PYZus{}returns\PYZus{}active\PYZus{}1}\PY{o}{.}\PY{n}{shape}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+(251, 10000)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \subsection{Simulate Price Path for
+Trials}\label{simulate-price-path-for-trials}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} calculate the stock price for every trial}
+
+\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}1} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros\PYZus{}like}\PY{p}{(}\PY{n}{daily\PYZus{}returns\PYZus{}active\PYZus{}1}\PY{p}{)}
+\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}1}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{n}{data\PYZus{}active\PYZus{}1}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{]}
+\PY{k}{for} \PY{n}{t} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{days}\PY{p}{)}\PY{p}{:}
+       \PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}1}\PY{p}{[}\PY{n}{t}\PY{p}{]} \PY{o}{=} \PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}1}\PY{p}{[}\PY{n}{t}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{*}\PY{n}{daily\PYZus{}returns\PYZus{}active\PYZus{}1}\PY{p}{[}\PY{n}{t}\PY{p}{]}
+        
+\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}2} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros\PYZus{}like}\PY{p}{(}\PY{n}{daily\PYZus{}returns\PYZus{}active\PYZus{}2}\PY{p}{)}
+\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}2}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{n}{data\PYZus{}active\PYZus{}2}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{]}
+\PY{k}{for} \PY{n}{t} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{days}\PY{p}{)}\PY{p}{:}
+       \PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}2}\PY{p}{[}\PY{n}{t}\PY{p}{]} \PY{o}{=} \PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}2}\PY{p}{[}\PY{n}{t}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{*}\PY{n}{daily\PYZus{}returns\PYZus{}active\PYZus{}2}\PY{p}{[}\PY{n}{t}\PY{p}{]}
+
+\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}3} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros\PYZus{}like}\PY{p}{(}\PY{n}{daily\PYZus{}returns\PYZus{}active\PYZus{}3}\PY{p}{)}
+\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}3}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{n}{data\PYZus{}active\PYZus{}3}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{]}
+\PY{k}{for} \PY{n}{t} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{days}\PY{p}{)}\PY{p}{:}
+       \PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}3}\PY{p}{[}\PY{n}{t}\PY{p}{]} \PY{o}{=} \PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}3}\PY{p}{[}\PY{n}{t}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{*}\PY{n}{daily\PYZus{}returns\PYZus{}active\PYZus{}3}\PY{p}{[}\PY{n}{t}\PY{p}{]}
+        
+\PY{n}{price\PYZus{}paths\PYZus{}passive} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros\PYZus{}like}\PY{p}{(}\PY{n}{daily\PYZus{}returns\PYZus{}passive}\PY{p}{)}
+\PY{n}{price\PYZus{}paths\PYZus{}passive}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{n}{data\PYZus{}passive}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{]}
+\PY{k}{for} \PY{n}{t} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{days}\PY{p}{)}\PY{p}{:}
+       \PY{n}{price\PYZus{}paths\PYZus{}passive}\PY{p}{[}\PY{n}{t}\PY{p}{]} \PY{o}{=} \PY{n}{price\PYZus{}paths\PYZus{}passive}\PY{p}{[}\PY{n}{t}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{*}\PY{n}{daily\PYZus{}returns\PYZus{}passive} \PY{p}{[}\PY{n}{t}\PY{p}{]}
+        
+\PY{c+c1}{\PYZsh{} Get execution time}
+\PY{n}{end\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{execution\PYZus{}time} \PY{o}{=} \PY{n}{end\PYZus{}time} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Execution Time: }\PY{l+s+si}{\PYZob{}}\PY{n}{execution\PYZus{}time}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ seconds}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get memory usage}
+\PY{n}{memory\PYZus{}info} \PY{o}{=} \PY{n}{psutil}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{memory\PYZus{}info}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Memory Usage: }\PY{l+s+si}{\PYZob{}}\PY{n}{memory\PYZus{}info}\PY{o}{.}\PY{n}{rss} \PY{o}{/} \PY{l+m+mi}{1024} \PY{o}{/} \PY{l+m+mi}{1024}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ MB}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Execution Time: 0.026353836059570312 seconds
+Memory Usage: 474.515625 MB
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}inspect price path array}
+\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}1}
+\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}1}\PY{o}{.}\PY{n}{shape}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+array([[49.459999  , 49.459999  , 49.459999  , {\ldots}, 49.459999  ,
+        49.459999  , 49.459999  ],
+       [50.14205521, 49.51983857, 49.17869469, {\ldots}, 49.26825776,
+        49.81380337, 49.63207521],
+       [50.25564066, 49.9294514 , 48.63492719, {\ldots}, 50.09936557,
+        49.67344739, 49.03971022],
+       {\ldots},
+       [49.71855146, 54.57873545, 67.7532875 , {\ldots}, 61.92270379,
+        71.10400142, 59.21382922],
+       [49.37451314, 55.82243494, 67.36904542, {\ldots}, 61.70600876,
+        72.16193496, 59.83542652],
+       [49.43625487, 55.23601294, 66.40528452, {\ldots}, 61.99495001,
+        71.8752812 , 61.12013617]])
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+(251, 10000)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \subsubsection{Price Path Arrays to
+Dataframes}\label{price-path-arrays-to-dataframes}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{}array to dataframe}
+\PY{n}{num\PYZus{}columns} \PY{o}{=} \PY{l+m+mi}{251}
+
+\PY{c+c1}{\PYZsh{}price path 1}
+\PY{n}{df1} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}1}\PY{p}{)}
+\PY{n}{df1} \PY{o}{=} \PY{n}{df1}\PY{o}{.}\PY{n}{T}
+\PY{n}{df1}\PY{o}{.}\PY{n}{columns} \PY{o}{=} \PY{p}{[}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Day }\PY{l+s+si}{\PYZob{}}\PY{n}{i}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{num\PYZus{}columns} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{}price path 2}
+\PY{n}{df2} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}2}\PY{p}{)}
+\PY{n}{df2} \PY{o}{=} \PY{n}{df2}\PY{o}{.}\PY{n}{T}
+\PY{n}{df2}\PY{o}{.}\PY{n}{columns} \PY{o}{=} \PY{p}{[}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Day }\PY{l+s+si}{\PYZob{}}\PY{n}{i}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{num\PYZus{}columns} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{}price path 3}
+\PY{n}{df3} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}3}\PY{p}{)}
+\PY{n}{df3} \PY{o}{=} \PY{n}{df3}\PY{o}{.}\PY{n}{T}
+\PY{n}{df3}\PY{o}{.}\PY{n}{columns} \PY{o}{=} \PY{p}{[}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Day }\PY{l+s+si}{\PYZob{}}\PY{n}{i}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{num\PYZus{}columns} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{}price path passive}
+\PY{n}{df\PYZus{}passive} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{price\PYZus{}paths\PYZus{}passive}\PY{p}{)}
+\PY{n}{df\PYZus{}passive} \PY{o}{=} \PY{n}{df\PYZus{}passive}\PY{o}{.}\PY{n}{T}
+\PY{n}{df\PYZus{}passive}\PY{o}{.}\PY{n}{columns} \PY{o}{=} \PY{p}{[}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Day }\PY{l+s+si}{\PYZob{}}\PY{n}{i}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{num\PYZus{}columns} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Get execution time}
+\PY{n}{end\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{execution\PYZus{}time} \PY{o}{=} \PY{n}{end\PYZus{}time} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Execution Time: }\PY{l+s+si}{\PYZob{}}\PY{n}{execution\PYZus{}time}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ seconds}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get memory usage}
+\PY{n}{memory\PYZus{}info} \PY{o}{=} \PY{n}{psutil}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{memory\PYZus{}info}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Memory Usage: }\PY{l+s+si}{\PYZob{}}\PY{n}{memory\PYZus{}info}\PY{o}{.}\PY{n}{rss} \PY{o}{/} \PY{l+m+mi}{1024} \PY{o}{/} \PY{l+m+mi}{1024}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ MB}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{}inspect dataframes}
+\PY{n}{df1}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\PY{n}{df1}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+\PY{n}{df2}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\PY{n}{df2}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+\PY{n}{df3}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\PY{n}{df3}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+\PY{n}{df\PYZus{}passive}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\PY{n}{df\PYZus{}passive}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Execution Time: 0.009378910064697266 seconds
+Memory Usage: 459.8125 MB
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+       Day 1      Day 2      Day 3      Day 4      Day 5      Day 6  \textbackslash{}
+0  49.459999  50.142055  50.255641  49.954029  50.244520  51.324730
+1  49.459999  49.519839  49.929451  50.447951  51.108579  51.986112
+2  49.459999  49.178695  48.634927  49.926565  51.252371  51.740776
+3  49.459999  49.589906  50.480854  49.878121  50.637257  51.489881
+4  49.459999  49.252438  49.813462  49.225565  48.172159  47.365233
+
+       Day 7      Day 8      Day 9     Day 10  {\ldots}    Day 242    Day 243  \textbackslash{}
+0  51.512793  51.898652  51.851680  51.925461  {\ldots}  49.877431  50.023224
+1  51.678181  52.377834  51.105925  50.639021  {\ldots}  55.368464  54.748442
+2  51.841784  51.740166  51.489128  52.777658  {\ldots}  65.737701  66.101872
+3  52.164876  52.179596  52.335114  52.021144  {\ldots}  46.672065  46.878675
+4  47.141077  47.270846  47.745082  48.444651  {\ldots}  53.256937  53.599854
+
+     Day 244    Day 245    Day 246    Day 247    Day 248    Day 249  \textbackslash{}
+0  49.919597  50.287670  49.961039  49.428941  49.228788  49.718551
+1  55.088559  54.136698  54.512995  54.432817  54.668094  54.578735
+2  66.382560  66.226224  65.743686  66.037811  67.738443  67.753287
+3  46.774629  47.031453  47.528797  47.495387  47.426392  47.333364
+4  53.723650  54.369297  53.830896  54.169037  52.974778  53.632303
+
+     Day 250    Day 251
+0  49.374513  49.436255
+1  55.822435  55.236013
+2  67.369045  66.405285
+3  48.049830  48.333099
+4  53.497597  53.100190
+
+[5 rows x 251 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 10000 entries, 0 to 9999
+Columns: 251 entries, Day 1 to Day 251
+dtypes: float64(251)
+memory usage: 19.1 MB
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+       Day 1      Day 2      Day 3      Day 4      Day 5      Day 6  \textbackslash{}
+0  57.369999  56.736916  57.463402  57.427945  56.809069  56.592897
+1  57.369999  57.153898  56.936941  56.998576  57.726618  58.264930
+2  57.369999  57.332079  58.515451  58.062084  57.392513  57.842025
+3  57.369999  57.860861  58.336171  58.506123  58.352762  58.547720
+4  57.369999  56.487252  56.710821  57.545210  57.387592  56.448676
+
+       Day 7      Day 8      Day 9     Day 10  {\ldots}    Day 242    Day 243  \textbackslash{}
+0  57.642147  57.975870  58.144153  58.322589  {\ldots}  67.878725  67.516306
+1  59.572960  60.144333  60.996670  61.079078  {\ldots}  66.575242  67.351102
+2  58.118601  57.736659  58.006618  56.984477  {\ldots}  64.903184  64.794017
+3  59.042679  58.409335  58.964540  59.516963  {\ldots}  74.305787  74.255289
+4  57.018717  56.470174  56.630518  57.531361  {\ldots}  76.211214  77.619138
+
+     Day 244    Day 245    Day 246    Day 247    Day 248    Day 249  \textbackslash{}
+0  68.223211  68.079959  67.696580  66.909891  67.174185  66.424769
+1  67.067401  67.533645  66.755985  66.815412  65.420927  65.451817
+2  64.418688  63.946906  63.393734  64.729022  64.639764  65.854754
+3  73.148148  73.483927  74.724817  74.894142  75.719815  76.686841
+4  77.902740  77.242045  78.046764  79.003897  78.804506  79.453323
+
+     Day 250    Day 251
+0  65.879670  66.342836
+1  66.576924  66.285637
+2  66.174727  66.159152
+3  78.546436  79.021308
+4  79.915620  80.337336
+
+[5 rows x 251 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 10000 entries, 0 to 9999
+Columns: 251 entries, Day 1 to Day 251
+dtypes: float64(251)
+memory usage: 19.1 MB
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+       Day 1      Day 2      Day 3      Day 4      Day 5      Day 6  \textbackslash{}
+0  59.389999  60.707993  59.838719  59.785114  60.806134  61.193734
+1  59.389999  60.166116  59.877287  60.130494  60.717470  59.314432
+2  59.389999  60.220866  60.227533  60.834411  60.365568  61.330244
+3  59.389999  59.000458  58.692505  58.248972  57.867721  57.318932
+4  59.389999  60.061452  60.781550  59.982555  60.520402  60.875122
+
+       Day 7      Day 8      Day 9     Day 10  {\ldots}    Day 242    Day 243  \textbackslash{}
+0  61.442648  61.283836  61.876675  61.821764  {\ldots}  70.486232  69.536005
+1  59.338747  59.133606  58.700590  58.362560  {\ldots}  65.486473  65.725207
+2  61.977660  61.800100  60.958200  61.650128  {\ldots}  70.300576  70.426631
+3  56.769928  56.467460  56.820836  56.656224  {\ldots}  54.330072  55.310252
+4  60.118794  61.010521  60.276146  59.830078  {\ldots}  73.592323  73.290657
+
+     Day 244    Day 245    Day 246    Day 247    Day 248    Day 249  \textbackslash{}
+0  68.919543  69.640605  69.161296  68.633208  68.026000  68.926217
+1  65.093343  65.942293  66.313873  66.143648  66.966856  67.566700
+2  69.459533  68.463462  68.368954  68.107189  67.091223  66.875138
+3  54.705369  54.863302  54.977028  54.623668  53.517801  53.602384
+4  73.459376  73.332980  74.000925  74.497731  74.949035  74.442844
+
+     Day 250    Day 251
+0  68.914790  67.547719
+1  68.073362  68.344322
+2  66.912838  66.823846
+3  52.565376  53.679401
+4  75.666851  75.568713
+
+[5 rows x 251 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 10000 entries, 0 to 9999
+Columns: 251 entries, Day 1 to Day 251
+dtypes: float64(251)
+memory usage: 19.1 MB
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+        Day 1       Day 2       Day 3       Day 4       Day 5       Day 6  \textbackslash{}
+0  587.590027  589.490846  600.207762  599.753277  588.604102  584.376440
+1  587.590027  591.834883  589.433102  589.273987  594.264130  593.161353
+2  587.590027  581.393708  585.952983  585.042265  585.993372  576.807663
+3  587.590027  587.561038  586.068964  576.291588  577.674929  570.339055
+4  587.590027  595.269446  595.402728  600.838128  608.275495  612.568485
+
+        Day 7       Day 8       Day 9      Day 10  {\ldots}     Day 242  \textbackslash{}
+0  578.293380  586.972386  575.066475  586.793660  {\ldots}  682.798269
+1  593.101377  603.215052  605.532145  591.959675  {\ldots}  690.593688
+2  578.940671  588.673454  600.896339  595.495995  {\ldots}  563.320508
+3  559.871186  575.112003  577.431562  585.211297  {\ldots}  733.725814
+4  620.304767  619.019062  624.788094  630.919915  {\ldots}  709.717050
+
+      Day 243     Day 244     Day 245     Day 246     Day 247     Day 248  \textbackslash{}
+0  689.549165  686.281954  691.232239  684.092294  691.786492  718.169544
+1  686.608866  688.113630  696.189327  691.828315  704.406626  704.640297
+2  558.783147  552.472162  550.671652  556.681801  558.130579  565.676076
+3  718.838284  740.699481  739.483087  741.929478  737.525436  748.017379
+4  704.144017  707.872672  705.932440  706.499385  701.567848  716.892353
+
+      Day 249     Day 250     Day 251
+0  724.979082  717.545567  712.865037
+1  704.480889  705.100904  698.333695
+2  569.121609  570.626981  577.762869
+3  742.978118  746.954925  743.852646
+4  706.514307  688.701356  695.969641
+
+[5 rows x 251 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 10000 entries, 0 to 9999
+Columns: 251 entries, Day 1 to Day 251
+dtypes: float64(251)
+memory usage: 19.1 MB
+    \end{Verbatim}
+
+    \subsection{Calculate Return \&
+Volatility}\label{calculate-return-volatility}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{}PCCOX \PYZhy{} data active 1}
+\PY{n}{df1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Volatility}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{df1}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{n}{axis} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{df1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Return}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{df1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Day 251}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{df1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Day 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{/}\PY{n}{df1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Day 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{}PRILX \PYZhy{} data active 2}
+\PY{n}{df2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Volatility}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{df2}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{n}{axis} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{df2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Return}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{df2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Day 251}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{df2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Day 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{/}\PY{n}{df2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Day 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{}RWMGX \PYZhy{} data active 3}
+\PY{n}{df3}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Volatility}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{df3}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{n}{axis} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{df3}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Return}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{df3}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Day 251}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{df3}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Day 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{/}\PY{n}{df3}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Day 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{}WFSPX \PYZhy{} data passive}
+\PY{n}{df\PYZus{}passive}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Volatility}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{df\PYZus{}passive}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{n}{axis} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{df\PYZus{}passive}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Return}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{df\PYZus{}passive}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Day 251}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{df\PYZus{}passive}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Day 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{/}\PY{n}{df\PYZus{}passive}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Day 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Get execution time}
+\PY{n}{end\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{execution\PYZus{}time} \PY{o}{=} \PY{n}{end\PYZus{}time} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Execution Time: }\PY{l+s+si}{\PYZob{}}\PY{n}{execution\PYZus{}time}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ seconds}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get memory usage}
+\PY{n}{memory\PYZus{}info} \PY{o}{=} \PY{n}{psutil}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{memory\PYZus{}info}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Memory Usage: }\PY{l+s+si}{\PYZob{}}\PY{n}{memory\PYZus{}info}\PY{o}{.}\PY{n}{rss} \PY{o}{/} \PY{l+m+mi}{1024} \PY{o}{/} \PY{l+m+mi}{1024}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ MB}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{}inspect changes}
+\PY{n}{df1}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\PY{n}{df2}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\PY{n}{df3}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\PY{n}{df\PYZus{}passive}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Execution Time: 0.056699275970458984 seconds
+Memory Usage: 410.640625 MB
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+       Day 1      Day 2      Day 3      Day 4      Day 5      Day 6  \textbackslash{}
+0  49.459999  50.142055  50.255641  49.954029  50.244520  51.324730
+1  49.459999  49.519839  49.929451  50.447951  51.108579  51.986112
+2  49.459999  49.178695  48.634927  49.926565  51.252371  51.740776
+3  49.459999  49.589906  50.480854  49.878121  50.637257  51.489881
+4  49.459999  49.252438  49.813462  49.225565  48.172159  47.365233
+
+       Day 7      Day 8      Day 9     Day 10  {\ldots}    Day 244    Day 245  \textbackslash{}
+0  51.512793  51.898652  51.851680  51.925461  {\ldots}  49.919597  50.287670
+1  51.678181  52.377834  51.105925  50.639021  {\ldots}  55.088559  54.136698
+2  51.841784  51.740166  51.489128  52.777658  {\ldots}  66.382560  66.226224
+3  52.164876  52.179596  52.335114  52.021144  {\ldots}  46.774629  47.031453
+4  47.141077  47.270846  47.745082  48.444651  {\ldots}  53.723650  54.369297
+
+     Day 246    Day 247    Day 248    Day 249    Day 250    Day 251  \textbackslash{}
+0  49.961039  49.428941  49.228788  49.718551  49.374513  49.436255
+1  54.512995  54.432817  54.668094  54.578735  55.822435  55.236013
+2  65.743686  66.037811  67.738443  67.753287  67.369045  66.405285
+3  47.528797  47.495387  47.426392  47.333364  48.049830  48.333099
+4  53.830896  54.169037  52.974778  53.632303  53.497597  53.100190
+
+   Volatility    Return
+0    3.947858 -0.000480
+1    2.556718  0.116782
+2    4.621787  0.342606
+3    2.353785 -0.022784
+4    3.221275  0.073599
+
+[5 rows x 253 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+       Day 1      Day 2      Day 3      Day 4      Day 5      Day 6  \textbackslash{}
+0  57.369999  56.736916  57.463402  57.427945  56.809069  56.592897
+1  57.369999  57.153898  56.936941  56.998576  57.726618  58.264930
+2  57.369999  57.332079  58.515451  58.062084  57.392513  57.842025
+3  57.369999  57.860861  58.336171  58.506123  58.352762  58.547720
+4  57.369999  56.487252  56.710821  57.545210  57.387592  56.448676
+
+       Day 7      Day 8      Day 9     Day 10  {\ldots}    Day 244    Day 245  \textbackslash{}
+0  57.642147  57.975870  58.144153  58.322589  {\ldots}  68.223211  68.079959
+1  59.572960  60.144333  60.996670  61.079078  {\ldots}  67.067401  67.533645
+2  58.118601  57.736659  58.006618  56.984477  {\ldots}  64.418688  63.946906
+3  59.042679  58.409335  58.964540  59.516963  {\ldots}  73.148148  73.483927
+4  57.018717  56.470174  56.630518  57.531361  {\ldots}  77.902740  77.242045
+
+     Day 246    Day 247    Day 248    Day 249    Day 250    Day 251  \textbackslash{}
+0  67.696580  66.909891  67.174185  66.424769  65.879670  66.342836
+1  66.755985  66.815412  65.420927  65.451817  66.576924  66.285637
+2  63.393734  64.729022  64.639764  65.854754  66.174727  66.159152
+3  74.724817  74.894142  75.719815  76.686841  78.546436  79.021308
+4  78.046764  79.003897  78.804506  79.453323  79.915620  80.337336
+
+   Volatility    Return
+0    5.343291  0.156403
+1    3.552965  0.155406
+2    3.627888  0.153201
+3    6.553574  0.377398
+4    7.672104  0.400337
+
+[5 rows x 253 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+       Day 1      Day 2      Day 3      Day 4      Day 5      Day 6  \textbackslash{}
+0  59.389999  60.707993  59.838719  59.785114  60.806134  61.193734
+1  59.389999  60.166116  59.877287  60.130494  60.717470  59.314432
+2  59.389999  60.220866  60.227533  60.834411  60.365568  61.330244
+3  59.389999  59.000458  58.692505  58.248972  57.867721  57.318932
+4  59.389999  60.061452  60.781550  59.982555  60.520402  60.875122
+
+       Day 7      Day 8      Day 9     Day 10  {\ldots}    Day 244    Day 245  \textbackslash{}
+0  61.442648  61.283836  61.876675  61.821764  {\ldots}  68.919543  69.640605
+1  59.338747  59.133606  58.700590  58.362560  {\ldots}  65.093343  65.942293
+2  61.977660  61.800100  60.958200  61.650128  {\ldots}  69.459533  68.463462
+3  56.769928  56.467460  56.820836  56.656224  {\ldots}  54.705369  54.863302
+4  60.118794  61.010521  60.276146  59.830078  {\ldots}  73.459376  73.332980
+
+     Day 246    Day 247    Day 248    Day 249    Day 250    Day 251  \textbackslash{}
+0  69.161296  68.633208  68.026000  68.926217  68.914790  67.547719
+1  66.313873  66.143648  66.966856  67.566700  68.073362  68.344322
+2  68.368954  68.107189  67.091223  66.875138  66.912838  66.823846
+3  54.977028  54.623668  53.517801  53.602384  52.565376  53.679401
+4  74.000925  74.497731  74.949035  74.442844  75.666851  75.568713
+
+   Volatility    Return
+0    4.535004  0.137358
+1    5.405600  0.150772
+2    4.020033  0.125170
+3    2.401950 -0.096154
+4    5.621738  0.272415
+
+[5 rows x 253 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+        Day 1       Day 2       Day 3       Day 4       Day 5       Day 6  \textbackslash{}
+0  587.590027  589.490846  600.207762  599.753277  588.604102  584.376440
+1  587.590027  591.834883  589.433102  589.273987  594.264130  593.161353
+2  587.590027  581.393708  585.952983  585.042265  585.993372  576.807663
+3  587.590027  587.561038  586.068964  576.291588  577.674929  570.339055
+4  587.590027  595.269446  595.402728  600.838128  608.275495  612.568485
+
+        Day 7       Day 8       Day 9      Day 10  {\ldots}     Day 244  \textbackslash{}
+0  578.293380  586.972386  575.066475  586.793660  {\ldots}  686.281954
+1  593.101377  603.215052  605.532145  591.959675  {\ldots}  688.113630
+2  578.940671  588.673454  600.896339  595.495995  {\ldots}  552.472162
+3  559.871186  575.112003  577.431562  585.211297  {\ldots}  740.699481
+4  620.304767  619.019062  624.788094  630.919915  {\ldots}  707.872672
+
+      Day 245     Day 246     Day 247     Day 248     Day 249     Day 250  \textbackslash{}
+0  691.232239  684.092294  691.786492  718.169544  724.979082  717.545567
+1  696.189327  691.828315  704.406626  704.640297  704.480889  705.100904
+2  550.671652  556.681801  558.130579  565.676076  569.121609  570.626981
+3  739.483087  741.929478  737.525436  748.017379  742.978118  746.954925
+4  705.932440  706.499385  701.567848  716.892353  706.514307  688.701356
+
+      Day 251  Volatility    Return
+0  712.865037   52.022360  0.213201
+1  698.333695   42.111909  0.188471
+2  577.762869   17.353598 -0.016725
+3  743.852646   50.990507  0.265938
+4  695.969641   29.529557  0.184448
+
+[5 rows x 253 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \section{Calculate Average Return}\label{calculate-average-return}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+
+\PY{n}{PCCOX\PYZus{}returns} \PY{o}{=} \PY{n}{df1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Return}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+\PY{n}{PRILX\PYZus{}returns} \PY{o}{=} \PY{n}{df2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Return}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+\PY{n}{RWMGX\PYZus{}returns} \PY{o}{=} \PY{n}{df3}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Return}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+\PY{n}{WFSPX\PYZus{}returns} \PY{o}{=} \PY{n}{df\PYZus{}passive}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Return}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{}create return table}
+\PY{n}{table} \PY{o}{=} \PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Fund}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Avg. Annual Return}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+        \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PCCOX}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{PCCOX\PYZus{}returns}\PY{p}{]}\PY{p}{,} 
+        \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PRILX}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{PRILX\PYZus{}returns}\PY{p}{]}\PY{p}{,}
+        \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{RWMGX}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{RWMGX\PYZus{}returns}\PY{p}{]}\PY{p}{,}
+        \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{WFSPX}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{WFSPX\PYZus{}returns}\PY{p}{]}\PY{p}{]}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{tabulate}\PY{p}{(}\PY{n}{table}\PY{p}{,} \PY{n}{headers}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{firstrow}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{tablefmt}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{grid}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get execution time}
+\PY{n}{end\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{execution\PYZus{}time} \PY{o}{=} \PY{n}{end\PYZus{}time} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Execution Time: }\PY{l+s+si}{\PYZob{}}\PY{n}{execution\PYZus{}time}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ seconds}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get memory usage}
+\PY{n}{memory\PYZus{}info} \PY{o}{=} \PY{n}{psutil}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{memory\PYZus{}info}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Memory Usage: }\PY{l+s+si}{\PYZob{}}\PY{n}{memory\PYZus{}info}\PY{o}{.}\PY{n}{rss} \PY{o}{/} \PY{l+m+mi}{1024} \PY{o}{/} \PY{l+m+mi}{1024}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ MB}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
++--------+----------------------+
+| Fund   |   Avg. Annual Return |
++========+======================+
+| PCCOX  |             0.132947 |
++--------+----------------------+
+| PRILX  |             0.105485 |
++--------+----------------------+
+| RWMGX  |             0.135522 |
++--------+----------------------+
+| WFSPX  |             0.116739 |
++--------+----------------------+
+Execution Time: 0.0050601959228515625 seconds
+Memory Usage: 411.3125 MB
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}verify return values}
+\PY{n}{PCCOX\PYZus{}returns} 
+\PY{n}{PRILX\PYZus{}returns}
+\PY{n}{RWMGX\PYZus{}returns}
+\PY{n}{WFSPX\PYZus{}returns}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+0.13294700306556498
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+0.10548515645859631
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+0.1355216750564024
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+0.11673880819466294
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \section{Visualizations}\label{visualizations}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}plot return distributions}
+
+\PY{n}{fig} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{p}{)}
+\PY{n}{fig}\PY{o}{.}\PY{n}{subplots\PYZus{}adjust}\PY{p}{(}\PY{n}{hspace}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{,} \PY{n}{wspace}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{)}
+
+\PY{n}{ax} \PY{o}{=} \PY{n}{fig}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{histplot}\PY{p}{(}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}1}\PY{p}{)}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Price after 251 days}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PCCOX Returns}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{ax} \PY{o}{=} \PY{n}{fig}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{histplot}\PY{p}{(}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}2}\PY{p}{)}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Price after 251 days}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PRILX Returns}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{ax} \PY{o}{=} \PY{n}{fig}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{histplot}\PY{p}{(}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}3}\PY{p}{)}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Price after 251 days}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{RWMGX Returns}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{ax} \PY{o}{=} \PY{n}{fig}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{histplot}\PY{p}{(}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{price\PYZus{}paths\PYZus{}passive}\PY{p}{)}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Price after 251 days}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{WFSPX Returns}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot: xlabel='250', ylabel='Count'>
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 0, 'Price after 251 days')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 1.0, 'PCCOX Returns')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot: xlabel='250', ylabel='Count'>
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 0, 'Price after 251 days')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 1.0, 'PRILX Returns')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot: xlabel='250', ylabel='Count'>
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 0, 'Price after 251 days')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 1.0, 'RWMGX Returns')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot: xlabel='250', ylabel='Count'>
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 0, 'Price after 251 days')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 1.0, 'WFSPX Returns')
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_22_12.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \subsection{PCCOX}\label{pccox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}plot 20 price paths}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}1}\PY{p}{)}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{:}\PY{l+m+mi}{20}\PY{p}{]}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Simulated PCCOX Prices}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Days}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Price (\PYZdl{})}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<Figure size 1500x600 with 0 Axes>
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[<matplotlib.lines.Line2D at 0x28fd91990>,
+ <matplotlib.lines.Line2D at 0x28fd919f0>,
+ <matplotlib.lines.Line2D at 0x28fd91a20>,
+ <matplotlib.lines.Line2D at 0x28fd91b10>,
+ <matplotlib.lines.Line2D at 0x28fd91c00>,
+ <matplotlib.lines.Line2D at 0x28fd91cf0>,
+ <matplotlib.lines.Line2D at 0x28fd91de0>,
+ <matplotlib.lines.Line2D at 0x28fd91ed0>,
+ <matplotlib.lines.Line2D at 0x28fd91fc0>,
+ <matplotlib.lines.Line2D at 0x28fd920b0>,
+ <matplotlib.lines.Line2D at 0x28fd921a0>,
+ <matplotlib.lines.Line2D at 0x28fd919c0>,
+ <matplotlib.lines.Line2D at 0x28fd92290>,
+ <matplotlib.lines.Line2D at 0x28fd92440>,
+ <matplotlib.lines.Line2D at 0x28fd92530>,
+ <matplotlib.lines.Line2D at 0x28fd92620>,
+ <matplotlib.lines.Line2D at 0x28fd92710>,
+ <matplotlib.lines.Line2D at 0x28fd92800>,
+ <matplotlib.lines.Line2D at 0x28fd928f0>,
+ <matplotlib.lines.Line2D at 0x28fd929e0>]
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 1.0, 'Simulated PCCOX Prices')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 0, 'Days')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0, 0.5, 'Price (\$)')
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_24_5.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \subsection{PRILX}\label{prilx}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}plot 20 price paths}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}2}\PY{p}{)}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{:}\PY{l+m+mi}{20}\PY{p}{]}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Simulated PRILX Prices}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Days}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Price (\PYZdl{})}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<Figure size 1500x600 with 0 Axes>
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[<matplotlib.lines.Line2D at 0x28fe2fc70>,
+ <matplotlib.lines.Line2D at 0x28fe2fcd0>,
+ <matplotlib.lines.Line2D at 0x28fe2fd00>,
+ <matplotlib.lines.Line2D at 0x28fe2fdf0>,
+ <matplotlib.lines.Line2D at 0x28fe2fee0>,
+ <matplotlib.lines.Line2D at 0x28fe2ffd0>,
+ <matplotlib.lines.Line2D at 0x28fe58100>,
+ <matplotlib.lines.Line2D at 0x28fe581f0>,
+ <matplotlib.lines.Line2D at 0x28fe582e0>,
+ <matplotlib.lines.Line2D at 0x28fe583d0>,
+ <matplotlib.lines.Line2D at 0x28fe2fca0>,
+ <matplotlib.lines.Line2D at 0x28fe584c0>,
+ <matplotlib.lines.Line2D at 0x28fe585b0>,
+ <matplotlib.lines.Line2D at 0x28fe58760>,
+ <matplotlib.lines.Line2D at 0x28fe58850>,
+ <matplotlib.lines.Line2D at 0x28fe58940>,
+ <matplotlib.lines.Line2D at 0x28fe58a30>,
+ <matplotlib.lines.Line2D at 0x28fe58b20>,
+ <matplotlib.lines.Line2D at 0x28fe58c10>,
+ <matplotlib.lines.Line2D at 0x28fe58d00>]
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 1.0, 'Simulated PRILX Prices')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 0, 'Days')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0, 0.5, 'Price (\$)')
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_26_5.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \subsection{RWMGX}\label{rwmgx}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}plot 20 price paths}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{price\PYZus{}paths\PYZus{}active\PYZus{}3}\PY{p}{)}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{:}\PY{l+m+mi}{20}\PY{p}{]}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Simulated RWMGX Prices}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Days}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Price (\PYZdl{})}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<Figure size 1500x600 with 0 Axes>
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[<matplotlib.lines.Line2D at 0x2a7634ac0>,
+ <matplotlib.lines.Line2D at 0x2a7634b20>,
+ <matplotlib.lines.Line2D at 0x2a7634b50>,
+ <matplotlib.lines.Line2D at 0x2a7634c40>,
+ <matplotlib.lines.Line2D at 0x2a7634d30>,
+ <matplotlib.lines.Line2D at 0x2a7634e20>,
+ <matplotlib.lines.Line2D at 0x2a7634f10>,
+ <matplotlib.lines.Line2D at 0x2a7635000>,
+ <matplotlib.lines.Line2D at 0x2a76350f0>,
+ <matplotlib.lines.Line2D at 0x2a76351e0>,
+ <matplotlib.lines.Line2D at 0x2a76352d0>,
+ <matplotlib.lines.Line2D at 0x2a7634af0>,
+ <matplotlib.lines.Line2D at 0x2a76353c0>,
+ <matplotlib.lines.Line2D at 0x2a7635570>,
+ <matplotlib.lines.Line2D at 0x2a7635660>,
+ <matplotlib.lines.Line2D at 0x2a7605c60>,
+ <matplotlib.lines.Line2D at 0x2a7606b60>,
+ <matplotlib.lines.Line2D at 0x2a7606a10>,
+ <matplotlib.lines.Line2D at 0x2a7635900>,
+ <matplotlib.lines.Line2D at 0x2a76359f0>]
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 1.0, 'Simulated RWMGX Prices')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 0, 'Days')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0, 0.5, 'Price (\$)')
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_28_5.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \subsection{WFSPX}\label{wfspx}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}plot 20 price paths}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{price\PYZus{}paths\PYZus{}passive}\PY{p}{)}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{:}\PY{l+m+mi}{20}\PY{p}{]}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Simulated WFSPX Prices}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Days}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Price (\PYZdl{})}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<Figure size 1500x600 with 0 Axes>
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[<matplotlib.lines.Line2D at 0x2a76c49d0>,
+ <matplotlib.lines.Line2D at 0x2a76c5f60>,
+ <matplotlib.lines.Line2D at 0x2a76c5f90>,
+ <matplotlib.lines.Line2D at 0x2a76c6080>,
+ <matplotlib.lines.Line2D at 0x2a76c6170>,
+ <matplotlib.lines.Line2D at 0x2a76c6260>,
+ <matplotlib.lines.Line2D at 0x2a76c6350>,
+ <matplotlib.lines.Line2D at 0x2a76c6440>,
+ <matplotlib.lines.Line2D at 0x2a76c6530>,
+ <matplotlib.lines.Line2D at 0x2a76c6620>,
+ <matplotlib.lines.Line2D at 0x2a76c6710>,
+ <matplotlib.lines.Line2D at 0x2a76c5f30>,
+ <matplotlib.lines.Line2D at 0x2a76c6800>,
+ <matplotlib.lines.Line2D at 0x2a76c69b0>,
+ <matplotlib.lines.Line2D at 0x2a76c6aa0>,
+ <matplotlib.lines.Line2D at 0x2a76c6b90>,
+ <matplotlib.lines.Line2D at 0x2a76c6c80>,
+ <matplotlib.lines.Line2D at 0x2a76c6d70>,
+ <matplotlib.lines.Line2D at 0x2a76c6e60>,
+ <matplotlib.lines.Line2D at 0x2a76c6f50>]
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 1.0, 'Simulated WFSPX Prices')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 0, 'Days')
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0, 0.5, 'Price (\$)')
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_30_5.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \subsubsection{Dataframes to CSV}\label{dataframes-to-csv}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+
+\PY{n}{df1}\PY{o}{.}\PY{n}{to\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PCCOX\PYZus{}returns.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{index} \PY{o}{=} \PY{k+kc}{False}\PY{p}{,} \PY{n}{header} \PY{o}{=} \PY{k+kc}{True}\PY{p}{)}
+\PY{n}{df2}\PY{o}{.}\PY{n}{to\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PRILX\PYZus{}returns.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{index} \PY{o}{=} \PY{k+kc}{False}\PY{p}{,} \PY{n}{header} \PY{o}{=} \PY{k+kc}{True}\PY{p}{)}
+\PY{n}{df3}\PY{o}{.}\PY{n}{to\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{RWMGX\PYZus{}returns.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{index} \PY{o}{=} \PY{k+kc}{False}\PY{p}{,} \PY{n}{header} \PY{o}{=} \PY{k+kc}{True}\PY{p}{)}
+\PY{n}{df\PYZus{}passive}\PY{o}{.}\PY{n}{to\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{WFSPX\PYZus{}returns.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{index} \PY{o}{=} \PY{k+kc}{False}\PY{p}{,} \PY{n}{header} \PY{o}{=} \PY{k+kc}{True}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get execution time}
+\PY{n}{end\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{execution\PYZus{}time} \PY{o}{=} \PY{n}{end\PYZus{}time} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Execution Time: }\PY{l+s+si}{\PYZob{}}\PY{n}{execution\PYZus{}time}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ seconds}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get memory usage}
+\PY{n}{memory\PYZus{}info} \PY{o}{=} \PY{n}{psutil}\PY{o}{.}\PY{n}{Process}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{memory\PYZus{}info}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Memory Usage: }\PY{l+s+si}{\PYZob{}}\PY{n}{memory\PYZus{}info}\PY{o}{.}\PY{n}{rss} \PY{o}{/} \PY{l+m+mi}{1024} \PY{o}{/} \PY{l+m+mi}{1024}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ MB}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Execution Time: 5.00885796546936 seconds
+Memory Usage: 488.421875 MB
+    \end{Verbatim}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
